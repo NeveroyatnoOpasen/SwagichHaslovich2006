@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://10np7jhfu3ao"]
+
+[ext_resource type="Script" uid="uid://xnxayf01ppnq" path="res://interact_ray.gd" id="1_owxp2"]
+
+[node name="InteractRay" type="RayCast3D"]
+target_position = Vector3(0, 0, -2)
+collide_with_areas = true
+debug_shape_custom_color = Color(0.6384847, 0.9230396, 0, 1)
+script = ExtResource("1_owxp2")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -0.5
+offset_top = -11.5
+offset_right = 0.5
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4

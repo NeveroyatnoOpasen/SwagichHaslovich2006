@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://bi06a3jhw5hdl"]
+
+[ext_resource type="Script" uid="uid://ouxpf2p7c6hi" path="res://door.gd" id="1_1vvux"]
+
+[sub_resource type="Animation" id="Animation_6xaln"]
+resource_name = "open"
+length = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatableBody3D:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 1.8762289, -0.33333334, -0.31270483, 0, 0),
+"times": PackedFloat32Array(0, 0.4947778)
+}
+
+[sub_resource type="Animation" id="Animation_1vvux"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatableBody3D:rotation:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1vvux"]
+_data = {
+&"RESET": SubResource("Animation_1vvux"),
+&"open": SubResource("Animation_6xaln")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_iu8q0"]
+size = Vector3(1.8669434, 3.5920868, 0.33525848)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cuixy"]
+
+[node name="Node3D" type="Node3D"]
+script = ExtResource("1_1vvux")
+prompt_message = null
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_1vvux")
+}
+
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D"]
+transform = Transform3D(0.9999998, 0, 0, 0, 1, 0, 0, 0, 0.9999998, 0.9465317, 1.7780299, 0.009929654)
+shape = SubResource("BoxShape3D_iu8q0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1.8644551, 0, 0, 0, 3.5875993, 0, 0, 0, 0.29505, 0.9465317, 1.7780299, 0.009929654)
+mesh = SubResource("BoxMesh_cuixy")
+skeleton = NodePath("../CollisionShape3D")

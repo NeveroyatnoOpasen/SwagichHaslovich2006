@@ -1,0 +1,21 @@
+[gd_scene load_steps=5 format=3 uid="uid://cc5ajeewqwnxs"]
+
+[ext_resource type="Script" uid="uid://x5d0tqgwqgxy" path="res://interactable.gd" id="1_nhor4"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_nhor4"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lc4xp"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_nhor4"]
+
+[node name="StaticBody3D" type="StaticBody3D"]
+physics_material_override = SubResource("PhysicsMaterial_nhor4")
+script = ExtResource("1_nhor4")
+prompt_message = "PIDARAS"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_lc4xp")
+debug_color = Color(0.7589351, 0.40672415, 0.53771883, 0.41960785)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_nhor4")

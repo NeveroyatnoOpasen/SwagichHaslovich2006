@@ -1,0 +1,63 @@
+[gd_scene load_steps=6 format=3 uid="uid://csvnxwbpljvax"]
+
+[ext_resource type="Script" uid="uid://dg7ljbob3vk5" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="PackedScene" uid="uid://10np7jhfu3ao" path="res://interact_ray.tscn" id="2_onrkg"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_i3pqv"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_onrkg"]
+
+[node name="CharacterBody3D" type="CharacterBody3D"]
+script = ExtResource("1_4flbx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_onrkg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_i3pqv")
+skeleton = NodePath("../CollisionShape3D")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="Camera3D" type="Camera3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7178495, -0.068795085)
+
+[node name="InteractRay" parent="Pivot" instance=ExtResource("2_onrkg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7631372, 0)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Cross" type="TextureRect" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -13.841001
+anchor_top = -7.5000005
+anchor_right = -13.841001
+anchor_bottom = -7.5000005
+offset_left = 553.64
+offset_top = 300.00003
+offset_right = 573.64
+offset_bottom = 316.00003
+texture = SubResource("PlaceholderTexture2D_onrkg")
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 1
+offset_left = -548.0
+offset_top = -305.0
+offset_right = -493.0
+offset_bottom = -282.0
+text = "dasdas"
