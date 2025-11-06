@@ -1,7 +1,7 @@
 # Area3D скрипт для нанесения урона
 extends Area3D
 
-@export var damage_amount: float = 50.0
+@export var damage_amount: float = 20.0
 func _on_body_entered(body: Node3D) -> void:
 	# Ищем компонент здоровья у вошедшего тела
 	var health_component = body.get_node_or_null("health_component")

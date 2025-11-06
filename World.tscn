@@ -1,0 +1,115 @@
+[gd_scene load_steps=15 format=3 uid="uid://cgvpfct6wwpu"]
+
+[ext_resource type="PackedScene" uid="uid://bi06a3jhw5hdl" path="res://Door.tscn" id="1_eu7l1"]
+[ext_resource type="PackedScene" uid="uid://cc5ajeewqwnxs" path="res://Button.tscn" id="2_p1v5b"]
+[ext_resource type="PackedScene" uid="uid://csvnxwbpljvax" path="res://player.tscn" id="3_wygdx"]
+[ext_resource type="PackedScene" uid="uid://dfpcckpvfavfl" path="res://dynamic_object.tscn" id="4_bah7m"]
+[ext_resource type="Script" uid="uid://bqk4fe5m5285n" path="res://damage_area.gd" id="5_fv4w7"]
+[ext_resource type="Script" uid="uid://bo4s4hdpoc4v3" path="res://damage.gd" id="5_p1v5b"]
+[ext_resource type="PackedScene" uid="uid://c6pmvjpktonre" path="res://moving_platform.tscn" id="7_wygdx"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r3fl7"]
+sky_top_color = Color(0.4586504, 0.47041243, 0.14559841, 1)
+sky_horizon_color = Color(1.1757305, 1.2172787, 1.0943995, 1)
+ground_bottom_color = Color(0.5533603, 0.7077918, 0.54108834, 1)
+ground_horizon_color = Color(1.1757305, 1.2172787, 1.0943995, 1)
+
+[sub_resource type="Sky" id="Sky_jka67"]
+sky_material = SubResource("ProceduralSkyMaterial_r3fl7")
+
+[sub_resource type="Environment" id="Environment_i5arm"]
+background_mode = 2
+sky = SubResource("Sky_jka67")
+tonemap_mode = 2
+ssao_enabled = true
+sdfgi_enabled = true
+glow_enabled = true
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_noarx"]
+size = Vector3(20.935516, 1.1134796, 14.9502945)
+
+[sub_resource type="BoxMesh" id="BoxMesh_a0tk4"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_r3fl7"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_r3fl7"]
+size = Vector3(2.6141357, 2.0888062, 3.282959)
+
+[node name="World" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_i5arm")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5564728, -0.21117401, 2.4556313)
+shape = SubResource("BoxShape3D_noarx")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(20.737246, 0, 0, 0, 1, 0, 0, 0, 15.030297, 1.4876852, -0.11817473, 2.6135495)
+mesh = SubResource("BoxMesh_a0tk4")
+
+[node name="Node3D" parent="StaticBody3D" instance=ExtResource("1_eu7l1")]
+transform = Transform3D(-0.006230831, 0, 0.99998057, 0, 1, 0, -0.99998057, 0, -0.006230831, -1.6776412, 0, 3.8905673)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.5550767, 0.83179915, 0, -0.83179915, 0.5550767, 2.357228, 5.4654217, 1.5737352)
+light_energy = 0.12
+
+[node name="StaticBody3D2" parent="." instance=ExtResource("2_p1v5b")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4404328, 0.81921387, 1.1371545)
+
+[node name="Player" parent="." instance=ExtResource("3_wygdx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8201668, 1.3192139, 3.8285599)
+
+[node name="RigidBody3D" parent="." instance=ExtResource("4_bah7m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.5270252, 1)
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.035248283, 0.9993786, 0, -0.9993786, -0.035248283, 7.7159305, 5.1388216, 1.1327496)
+light_color = Color(0.9189686, 0.31877813, 0.3632018, 1)
+light_energy = 12.67
+light_indirect_energy = 1.825
+spot_range = 9.924234
+spot_angle = 33.8
+
+[node name="SpotLight3D2" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.035248283, 0.9993786, 0, -0.9993786, -0.035248283, 8.169775, 5.1388216, 5.830983)
+light_color = Color(0.45423466, 0.6224309, 5.7756904e-07, 1)
+light_energy = 12.67
+light_indirect_energy = 1.825
+spot_range = 9.924234
+spot_angle = 33.8
+
+[node name="HealArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.400861, 0, 5.079589)
+script = ExtResource("5_p1v5b")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="HealArea"]
+transform = Transform3D(2.8280468, 0, 0, 0, 0.6499224, 0, 0, 0, 3.2018435, 1.5715714, 0.31027305, 1.1011488)
+mesh = SubResource("BoxMesh_r3fl7")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="HealArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4233885, 1.620347, 1.4976807)
+shape = SubResource("BoxShape3D_r3fl7")
+
+[node name="DamageArea" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.169219, 0, 0)
+script = ExtResource("5_fv4w7")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="DamageArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4233885, 1.620347, 1.4976807)
+shape = SubResource("BoxShape3D_r3fl7")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="DamageArea"]
+transform = Transform3D(2.8280468, 0, 0, 0, 0.6499224, 0, 0, 0, 3.2018435, 1.5715714, 0.31027305, 1.1011488)
+mesh = SubResource("BoxMesh_r3fl7")
+
+[node name="Moving platform" parent="." instance=ExtResource("7_wygdx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.47861195, 0, -7.7620277)
+
+[connection signal="area_entered" from="HealArea" to="HealArea" method="_on_area_entered"]
+[connection signal="body_entered" from="HealArea" to="HealArea" method="_on_body_entered"]
+[connection signal="area_entered" from="DamageArea" to="DamageArea" method="_on_area_entered"]
+[connection signal="body_entered" from="DamageArea" to="DamageArea" method="_on_body_entered"]

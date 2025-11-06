@@ -3,8 +3,9 @@ extends Node
 class_name HealthComponent
 
 # Объявляем сигнал
-signal health_changed(current_health: float, max_health: float)
+signal health_changed(current_health: float, max_health: float, damaged: bool)
 signal health_depleted()
+
 
 @export var max_health: float = 100.0
 var health: float 
@@ -16,7 +17,7 @@ func _ready() -> void:
 func apply_damage(damage: float) -> void: 
 	health -= damage
 	# Испускаем сигнал при изменении здоровья
-	health_changed.emit(health, max_health)
+	health_changed.emit(health, max_health, 1)
 	
 	if health <= 0: 
 		# Испускаем сигнал при смерти
@@ -26,4 +27,4 @@ func apply_damage(damage: float) -> void:
 # Метод для лечения (опционально)
 func heal(amount: float) -> void:
 	health = min(health + amount, max_health)
-	health_changed.emit(health, max_health)
+	health_changed.emit(health, max_health, 0)

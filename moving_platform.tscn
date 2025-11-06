@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=3 uid="uid://c6pmvjpktonre"]
+
+[ext_resource type="Script" uid="uid://co1vfaqvmkwaj" path="res://moving_platform.gd" id="1_q06lf"]
+
+[sub_resource type="Curve3D" id="Curve3D_k1b7n"]
+_data = {
+"points": PackedVector3Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0.016879082, 0, -11.918783),
+"tilts": PackedFloat32Array(0, 0)
+}
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hrpga"]
+size = Vector3(3.100586, 0.24456787, 3.195938)
+
+[sub_resource type="BoxMesh" id="BoxMesh_q06lf"]
+
+[node name="Moving platform" type="Path3D"]
+curve = SubResource("Curve3D_k1b7n")
+script = ExtResource("1_q06lf")
+
+[node name="PathFollow3D" type="PathFollow3D" parent="."]
+transform = Transform3D(-4.3711207e-08, 0, 0.9999949, 0, 0.99999434, 0, -0.9999958, 0, -4.3711164e-08, 0, 0, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="PathFollow3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PathFollow3D/StaticBody3D"]
+transform = Transform3D(1, 0, -2.1316282e-14, 0, 1, 0, 2.1316282e-14, 0, 1, -8.881784e-16, 0, 0.043754578)
+shape = SubResource("BoxShape3D_hrpga")
+debug_color = Color(0.86601084, 0.35540032, 0.038059488, 0.41960785)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PathFollow3D/StaticBody3D"]
+transform = Transform3D(3.0514305, 0, -1.4210855e-14, 0, 0.25329387, 0, 4.2632564e-14, 0, 3.100137, 0, 0, 0)
+mesh = SubResource("BoxMesh_q06lf")
+skeleton = NodePath("")
