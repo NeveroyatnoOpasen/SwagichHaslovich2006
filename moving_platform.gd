@@ -17,5 +17,5 @@ func _process(delta: float) -> void:
 		direction = 1.0
 		
 	path.progress_ratio += delta * speed * direction
-	print(direction)
+
 	# Меняем направление при достижении концов

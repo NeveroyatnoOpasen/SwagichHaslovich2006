@@ -1,13 +1,24 @@
-[gd_scene load_steps=11 format=3 uid="uid://csvnxwbpljvax"]
+[gd_scene load_steps=16 format=3 uid="uid://csvnxwbpljvax"]
 
 [ext_resource type="Script" uid="uid://dg7ljbob3vk5" path="res://player.gd" id="1_4flbx"]
-[ext_resource type="PackedScene" uid="uid://10np7jhfu3ao" path="res://interact_ray.tscn" id="2_onrkg"]
+[ext_resource type="PackedScene" uid="uid://10np7jhfu3ao" path="res://components/Interaction Array/interact_ray.tscn" id="2_onrkg"]
 [ext_resource type="Script" uid="uid://3em6wetdguq8" path="res://ui_script.gd" id="3_hqtel"]
-[ext_resource type="PackedScene" uid="uid://bilhtfahidddi" path="res://components/health_component.tscn" id="3_i3pqv"]
+[ext_resource type="PackedScene" uid="uid://bilhtfahidddi" path="res://components/HealthComponent/health_component.tscn" id="3_i3pqv"]
+[ext_resource type="Script" path="res://components/CombatComponents/combat_component.gd" id="5_combat"]
+[ext_resource type="Script" path="res://components/CombatComponents/melee_weapon_component.gd" id="6_weapon"]
+[ext_resource type="Script" path="res://components/CombatComponents/hitbox_component.gd" id="7_hitbox"]
+[ext_resource type="Script" path="res://components/CombatComponents/hurtbox_component.gd" id="8_hurtbox"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_i3pqv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hitbox"]
+size = Vector3(1, 1, 1.5)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
+radius = 0.5
+height = 2.0
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_onrkg"]
 
@@ -114,5 +125,49 @@ libraries = {
 }
 
 [node name="health_component" parent="." instance=ExtResource("3_i3pqv")]
+
+[node name="CombatComponent" type="Node" parent="."]
+script = ExtResource("5_combat")
+enable_combo = true
+max_combo_count = 3
+combo_window = 0.5
+allow_air_attack = false
+stop_movement_on_attack = true
+
+[node name="MeleeWeaponComponent" type="Node3D" parent="Pivot/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.3, -1)
+script = ExtResource("6_weapon")
+light_damage = 15.0
+light_knockback = 3.0
+light_attack_duration = 0.3
+light_active_start = 0.1
+light_active_end = 0.25
+light_cooldown = 0.4
+heavy_damage = 35.0
+heavy_knockback = 8.0
+heavy_attack_duration = 0.6
+heavy_active_start = 0.2
+heavy_active_end = 0.5
+heavy_cooldown = 1.0
+
+[node name="HitboxComponent" type="Area3D" parent="Pivot/Camera3D/MeleeWeaponComponent"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("7_hitbox")
+damage = 15.0
+knockback_force = 5.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/Camera3D/MeleeWeaponComponent/HitboxComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75)
+shape = SubResource("BoxShape3D_hitbox")
+
+[node name="HurtboxComponent" type="Area3D" parent="."]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("8_hurtbox")
+damage_multiplier = 1.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent"]
+shape = SubResource("CapsuleShape3D_hurtbox")
 
 [connection signal="health_changed" from="health_component" to="Control" method="_on_health_component_health_changed"]

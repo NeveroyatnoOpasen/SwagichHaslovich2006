@@ -1,12 +1,13 @@
-[gd_scene load_steps=15 format=3 uid="uid://cgvpfct6wwpu"]
+[gd_scene load_steps=16 format=3 uid="uid://cgvpfct6wwpu"]
 
 [ext_resource type="PackedScene" uid="uid://bi06a3jhw5hdl" path="res://Door.tscn" id="1_eu7l1"]
 [ext_resource type="PackedScene" uid="uid://cc5ajeewqwnxs" path="res://Button.tscn" id="2_p1v5b"]
 [ext_resource type="PackedScene" uid="uid://csvnxwbpljvax" path="res://player.tscn" id="3_wygdx"]
 [ext_resource type="PackedScene" uid="uid://dfpcckpvfavfl" path="res://dynamic_object.tscn" id="4_bah7m"]
 [ext_resource type="Script" uid="uid://bqk4fe5m5285n" path="res://damage_area.gd" id="5_fv4w7"]
-[ext_resource type="Script" uid="uid://bo4s4hdpoc4v3" path="res://damage.gd" id="5_p1v5b"]
+[ext_resource type="Script" uid="uid://bo4s4hdpoc4v3" path="res://miscelanius/scripts/damage.gd" id="5_p1v5b"]
 [ext_resource type="PackedScene" uid="uid://c6pmvjpktonre" path="res://moving_platform.tscn" id="7_wygdx"]
+[ext_resource type="PackedScene" uid="uid://cq4x7y1r5f1vn" path="res://enemy.tscn" id="8_enemy"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r3fl7"]
 sky_top_color = Color(0.4586504, 0.47041243, 0.14559841, 1)
@@ -108,6 +109,15 @@ mesh = SubResource("BoxMesh_r3fl7")
 
 [node name="Moving platform" parent="." instance=ExtResource("7_wygdx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.47861195, 0, -7.7620277)
+
+[node name="Enemy" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 1.5, 3)
+
+[node name="Enemy2" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.5, 3)
+
+[node name="Enemy3" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1.5, 0)
 
 [connection signal="area_entered" from="HealArea" to="HealArea" method="_on_area_entered"]
 [connection signal="body_entered" from="HealArea" to="HealArea" method="_on_body_entered"]

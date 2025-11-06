@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://c2kx5y9r3d9tl"]
+
+[ext_resource type="Script" path="res://components/CombatComponents/hurtbox_component.gd" id="1_hurtbox"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
+radius = 0.5
+height = 2.0
+
+[node name="HurtboxComponent" type="Area3D"]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_hurtbox")
+damage_multiplier = 1.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_hurtbox")

@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://d3lx6y0r4e0um"]
+
+[ext_resource type="Script" path="res://components/CombatComponents/melee_weapon_component.gd" id="1_weapon"]
+[ext_resource type="PackedScene" uid="uid://bhqx3y7r2c8sk" path="res://components/CombatComponents/hitbox_component.tscn" id="2_hitbox"]
+
+[node name="MeleeWeaponComponent" type="Node3D"]
+script = ExtResource("1_weapon")
+light_damage = 15.0
+light_knockback = 3.0
+light_attack_duration = 0.3
+light_active_start = 0.1
+light_active_end = 0.25
+light_cooldown = 0.4
+heavy_damage = 35.0
+heavy_knockback = 8.0
+heavy_attack_duration = 0.6
+heavy_active_start = 0.2
+heavy_active_end = 0.5
+heavy_cooldown = 1.0
+
+[node name="HitboxComponent" parent="." instance=ExtResource("2_hitbox")]
