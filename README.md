@@ -1,4 +1,3 @@
-# Hasl
-A rougelike souls like game in first person with narrative
-"# SwagichHaslovich2006" 
-"# SwagichHaslovich2006" 
+# Hasl project:: Игра от хаслеров для хасрлеров
+Разогревочный проект перед будущими еще более прогревочноми проектами ^_^
+Роуг лайк игра с боевой системой в духе соулс лайков, но от первого лица(надеюсь выйдет адекватно)
