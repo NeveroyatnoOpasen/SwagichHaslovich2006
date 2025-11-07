@@ -25,7 +25,7 @@ func _ready() -> void:
 	# Захватываем курсор и скрываем его
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
-	# Подключаем сигналы боевой системы
+	# Подключаем сигналы боевой системы если компонент присуттсвует
 	if combat_component:
 		combat_component.attack_performed.connect(_on_attack_performed)
 		combat_component.combo_started.connect(_on_combo_started)
