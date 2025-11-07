@@ -1,4 +1,4 @@
-extends "res://interactable.gd"
+extends "res://miscelanius/scripts/interactable.gd"
 
 var World = get_tree()
 var drag = false

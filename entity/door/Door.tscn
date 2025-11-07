@@ -1,34 +1,36 @@
 [gd_scene load_steps=7 format=3 uid="uid://bi06a3jhw5hdl"]
 
-[ext_resource type="Script" uid="uid://ouxpf2p7c6hi" path="res://miscelanius/scripts/door.gd" id="1_1vvux"]
+[ext_resource type="Script" uid="uid://ouxpf2p7c6hi" path="res://entity/door/door.gd" id="1_1vvux"]
+
+[sub_resource type="Animation" id="Animation_1vvux"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_6xaln"]
 resource_name = "open"
 length = 0.5
-tracks/0/type = "bezier"
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatableBody3D:rotation:y")
+tracks/0/path = NodePath(".:rotation")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 1.8762289, -0.33333334, -0.31270483, 0, 0),
-"times": PackedFloat32Array(0, 0.4947778)
-}
-
-[sub_resource type="Animation" id="Animation_1vvux"]
-length = 0.001
-tracks/0/type = "bezier"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("AnimatableBody3D:rotation:y")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 2.0943952, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1vvux"]
@@ -42,23 +44,20 @@ size = Vector3(1.8669434, 3.5920868, 0.33525848)
 
 [sub_resource type="BoxMesh" id="BoxMesh_cuixy"]
 
-[node name="Node3D" type="Node3D"]
+[node name="Door" type="StaticBody3D"]
+script = ExtResource("1_1vvux")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
 libraries = {
 &"": SubResource("AnimationLibrary_1vvux")
 }
 
-[node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
-transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 0, 0)
-script = ExtResource("1_1vvux")
-prompt_message = "Door"
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D"]
-transform = Transform3D(0.9999998, 0, 0, 0, 1, 0, 0, 0, 0.9999998, 0.9465317, 1.7780299, 0.009929654)
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.99999976, 0, 0, 0, 1, 0, 0, 0, 0.99999976, 0.94653165, 1.7780299, 0.009929653)
 shape = SubResource("BoxShape3D_iu8q0")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="AnimatableBody3D"]
-transform = Transform3D(1.8644551, 0, 0, 0, 3.5875993, 0, 0, 0, 0.29505, 0.9465317, 1.7780299, 0.009929654)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.864455, 0, 0, 0, 3.5875993, 0, 0, 0, 0.29504997, 0.94653165, 1.7780299, 0.009929653)
 mesh = SubResource("BoxMesh_cuixy")
 skeleton = NodePath("../CollisionShape3D")

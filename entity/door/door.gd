@@ -3,9 +3,9 @@ extends "res://miscelanius/scripts/interactable.gd"
 func use():
 	print("door")
 	if !open:
-		$"../AnimationPlayer".play("open")
+		%AnimationPlayer.play("open")
 		open = !open
 	else:
-		$"../AnimationPlayer".play_backwards("open")
+		%AnimationPlayer.play_backwards("open")
 		open = !open
 	pass

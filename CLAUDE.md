@@ -141,6 +141,8 @@ if health_component:
     health_component.health_depleted.connect(_on_health_depleted)
 ```
 
+**For comprehensive signals documentation**, see `Docs/godot_signals_cheatsheet.md`
+
 ### Signal-Based Communication
 The codebase heavily uses Godot signals for decoupled communication between components. All major components emit signals for state changes.
 

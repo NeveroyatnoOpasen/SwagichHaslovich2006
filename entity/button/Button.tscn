@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cc5ajeewqwnxs"]
 
-[ext_resource type="Script" uid="uid://x5d0tqgwqgxy" path="res://interactable.gd" id="1_nhor4"]
+[ext_resource type="Script" uid="uid://b8i4tqb1pfnr8" path="res://entity/button/button.gd" id="1_coj2m"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_nhor4"]
 
@@ -8,10 +8,10 @@
 
 [sub_resource type="BoxMesh" id="BoxMesh_nhor4"]
 
-[node name="StaticBody3D" type="StaticBody3D"]
+[node name="Button" type="StaticBody3D"]
 physics_material_override = SubResource("PhysicsMaterial_nhor4")
-script = ExtResource("1_nhor4")
-prompt_message = "PIDARAS"
+script = ExtResource("1_coj2m")
+prompt_message = "Button"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_lc4xp")
