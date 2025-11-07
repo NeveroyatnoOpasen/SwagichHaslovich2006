@@ -1,24 +1,18 @@
 [gd_scene load_steps=8 format=3 uid="uid://cq4x7y1r5f1vn"]
 
-[ext_resource type="Script" path="res://enemy.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://dvd2lhclre71n" path="res://entity/enemy/enemy.gd" id="1_enemy"]
 [ext_resource type="PackedScene" uid="uid://bilhtfahidddi" path="res://components/HealthComponent/health_component.tscn" id="2_health"]
-[ext_resource type="Script" path="res://components/CombatComponents/hurtbox_component.gd" id="3_hurtbox"]
+[ext_resource type="Script" uid="uid://dypwmlmtrk5o2" path="res://components/CombatComponents/hurtbox_component.gd" id="3_hurtbox"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
-radius = 0.5
-height = 2.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_enemy"]
 albedo_color = Color(1, 0, 0, 1)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_enemy"]
 material = SubResource("StandardMaterial3D_enemy")
-radius = 0.5
-height = 2.0
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
-radius = 0.5
-height = 2.0
 
 [node name="Enemy" type="CharacterBody3D"]
 script = ExtResource("1_enemy")
@@ -36,7 +30,6 @@ max_health = 50.0
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("3_hurtbox")
-damage_multiplier = 1.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent"]
 shape = SubResource("CapsuleShape3D_hurtbox")

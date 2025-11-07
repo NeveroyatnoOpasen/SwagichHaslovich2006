@@ -1,4 +1,4 @@
-extends "res://interactable.gd"
+extends "res://miscelanius/scripts/interactable.gd"
 #@export var prompt_message = "Interact"
 func use():
 	print("door")

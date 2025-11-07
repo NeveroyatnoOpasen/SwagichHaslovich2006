@@ -1,10 +1,10 @@
 [gd_scene load_steps=18 format=3 uid="uid://cgvpfct6wwpu"]
 
-[ext_resource type="PackedScene" uid="uid://csvnxwbpljvax" path="res://player.tscn" id="3_wygdx"]
+[ext_resource type="PackedScene" uid="uid://csvnxwbpljvax" path="res://entity/player/player.tscn" id="3_wygdx"]
 [ext_resource type="PackedScene" uid="uid://dxw7cledbpiia" path="res://addons/proto-csgs/proto_csg_box_3d.tscn" id="5_lely3"]
 [ext_resource type="Texture2D" uid="uid://cej3yoosomfd2" path="res://addons/proto-csgs/textures/dark/texture_13.png" id="6_l1j2j"]
 [ext_resource type="PackedScene" uid="uid://dilcl7aco8lba" path="res://addons/proto-csgs/proto_csg_cylinder_3d.tscn" id="7_rw0xj"]
-[ext_resource type="PackedScene" uid="uid://cq4x7y1r5f1vn" path="res://enemy.tscn" id="8_enemy"]
+[ext_resource type="PackedScene" uid="uid://cq4x7y1r5f1vn" path="res://entity/enemy/enemy.tscn" id="8_enemy"]
 [ext_resource type="PackedScene" uid="uid://qgv0bohj4yn5" path="res://addons/proto-csgs/proto_csg_sphere_3d.tscn" id="8_rw0xj"]
 [ext_resource type="Texture2D" uid="uid://cd3fcinti1un5" path="res://addons/proto-csgs/textures/dark/texture_01.png" id="8_t2w4v"]
 [ext_resource type="PackedScene" uid="uid://yjolybe6ur3n" path="res://addons/proto-csgs/proto_csg_torus_3d.tscn" id="9_t2w4v"]

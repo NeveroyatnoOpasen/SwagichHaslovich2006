@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://bi06a3jhw5hdl"]
 
-[ext_resource type="Script" uid="uid://ouxpf2p7c6hi" path="res://door.gd" id="1_1vvux"]
+[ext_resource type="Script" uid="uid://ouxpf2p7c6hi" path="res://miscelanius/scripts/door.gd" id="1_1vvux"]
 
 [sub_resource type="Animation" id="Animation_6xaln"]
 resource_name = "open"

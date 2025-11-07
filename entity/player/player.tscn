@@ -1,13 +1,13 @@
-[gd_scene load_steps=16 format=3 uid="uid://csvnxwbpljvax"]
+[gd_scene load_steps=17 format=3 uid="uid://csvnxwbpljvax"]
 
-[ext_resource type="Script" uid="uid://dg7ljbob3vk5" path="res://player.gd" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://dg7ljbob3vk5" path="res://entity/player/player.gd" id="1_4flbx"]
 [ext_resource type="PackedScene" uid="uid://10np7jhfu3ao" path="res://components/Interaction Array/interact_ray.tscn" id="2_onrkg"]
 [ext_resource type="Script" uid="uid://3em6wetdguq8" path="res://ui_script.gd" id="3_hqtel"]
 [ext_resource type="PackedScene" uid="uid://bilhtfahidddi" path="res://components/HealthComponent/health_component.tscn" id="3_i3pqv"]
-[ext_resource type="Script" path="res://components/CombatComponents/combat_component.gd" id="5_combat"]
-[ext_resource type="Script" path="res://components/CombatComponents/melee_weapon_component.gd" id="6_weapon"]
-[ext_resource type="Script" path="res://components/CombatComponents/hitbox_component.gd" id="7_hitbox"]
-[ext_resource type="Script" path="res://components/CombatComponents/hurtbox_component.gd" id="8_hurtbox"]
+[ext_resource type="Script" uid="uid://cstt3mgwuuain" path="res://components/CombatComponents/combat_component.gd" id="5_combat"]
+[ext_resource type="Script" uid="uid://cgj3byjljqdxk" path="res://components/CombatComponents/melee_weapon_component.gd" id="6_weapon"]
+[ext_resource type="Script" uid="uid://bj7v6hjyshcoe" path="res://components/CombatComponents/hitbox_component.gd" id="7_hitbox"]
+[ext_resource type="Script" uid="uid://dypwmlmtrk5o2" path="res://components/CombatComponents/hurtbox_component.gd" id="8_hurtbox"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
 
@@ -16,11 +16,22 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_hitbox"]
 size = Vector3(1, 1, 1.5)
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
-radius = 0.5
-height = 2.0
-
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_onrkg"]
+
+[sub_resource type="Animation" id="Animation_sweqy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("OverlayWirhEffects:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_hqtel"]
 resource_name = "blood"
@@ -38,26 +49,13 @@ tracks/0/keys = {
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
-[sub_resource type="Animation" id="Animation_sweqy"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("OverlayWirhEffects:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2hs0m"]
 _data = {
 &"RESET": SubResource("Animation_sweqy"),
 &"blood": SubResource("Animation_hqtel")
 }
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
 
 [node name="Player" type="CharacterBody3D" groups=["Player"]]
 script = ExtResource("1_4flbx")
@@ -73,6 +71,20 @@ skeleton = NodePath("../CollisionShape3D")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7126968, -0.2907617)
 
 [node name="Camera3D" type="Camera3D" parent="Pivot"]
+
+[node name="MeleeWeaponComponent" type="Node3D" parent="Pivot/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.3, -1)
+script = ExtResource("6_weapon")
+
+[node name="HitboxComponent" type="Area3D" parent="Pivot/Camera3D/MeleeWeaponComponent"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("7_hitbox")
+damage = 15.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/Camera3D/MeleeWeaponComponent/HitboxComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75)
+shape = SubResource("BoxShape3D_hitbox")
 
 [node name="InteractRay" parent="Pivot" instance=ExtResource("2_onrkg")]
 
@@ -128,44 +140,11 @@ libraries = {
 
 [node name="CombatComponent" type="Node" parent="."]
 script = ExtResource("5_combat")
-enable_combo = true
-max_combo_count = 3
-combo_window = 0.5
-allow_air_attack = false
-stop_movement_on_attack = true
-
-[node name="MeleeWeaponComponent" type="Node3D" parent="Pivot/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.3, -1)
-script = ExtResource("6_weapon")
-light_damage = 15.0
-light_knockback = 3.0
-light_attack_duration = 0.3
-light_active_start = 0.1
-light_active_end = 0.25
-light_cooldown = 0.4
-heavy_damage = 35.0
-heavy_knockback = 8.0
-heavy_attack_duration = 0.6
-heavy_active_start = 0.2
-heavy_active_end = 0.5
-heavy_cooldown = 1.0
-
-[node name="HitboxComponent" type="Area3D" parent="Pivot/Camera3D/MeleeWeaponComponent"]
-collision_layer = 2
-collision_mask = 4
-script = ExtResource("7_hitbox")
-damage = 15.0
-knockback_force = 5.0
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/Camera3D/MeleeWeaponComponent/HitboxComponent"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75)
-shape = SubResource("BoxShape3D_hitbox")
 
 [node name="HurtboxComponent" type="Area3D" parent="."]
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("8_hurtbox")
-damage_multiplier = 1.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent"]
 shape = SubResource("CapsuleShape3D_hurtbox")
