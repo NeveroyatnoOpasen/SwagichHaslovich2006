@@ -83,10 +83,21 @@ func _ready() -> void:
 	else:
 		change_state(State.IDLE)
 
+	# Найти игрока в сцене (отложенно, чтобы игрок успел заспавниться)
+	call_deferred("_find_player")
+
+func _find_player() -> void:
 	# Найти игрока в сцене (но не преследовать сразу)
 	var players = get_tree().get_nodes_in_group("Player")
 	if players.size() > 0:
 		player = players[0]
+		print("Enemy found player: ", player.name)
+	else:
+		print("Enemy: No player found in scene yet")
+		# Попробуем снова через секунду
+		await get_tree().create_timer(1.0).timeout
+		_find_player()
+
 # ============================================================================
 # STATE MACHINE
 # ============================================================================

@@ -1,6 +1,6 @@
-[gd_scene load_steps=22 format=3 uid="uid://cgvpfct6wwpu"]
+[gd_scene load_steps=23 format=3 uid="uid://cgvpfct6wwpu"]
 
-[ext_resource type="PackedScene" uid="uid://csvnxwbpljvax" path="res://entity/player/player.tscn" id="3_wygdx"]
+[ext_resource type="Script" uid="uid://cnfovkk3iyo0b" path="res://levels/World.gd" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://dxw7cledbpiia" path="res://addons/proto-csgs/proto_csg_box_3d.tscn" id="5_lely3"]
 [ext_resource type="Texture2D" uid="uid://cej3yoosomfd2" path="res://addons/proto-csgs/textures/dark/texture_13.png" id="6_l1j2j"]
 [ext_resource type="PackedScene" uid="uid://dilcl7aco8lba" path="res://addons/proto-csgs/proto_csg_cylinder_3d.tscn" id="7_rw0xj"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cc5ajeewqwnxs" path="res://entity/button/Button.tscn" id="9_ke1pg"]
 [ext_resource type="PackedScene" uid="uid://yjolybe6ur3n" path="res://addons/proto-csgs/proto_csg_torus_3d.tscn" id="9_t2w4v"]
 [ext_resource type="PackedScene" uid="uid://bi06a3jhw5hdl" path="res://entity/door/Door.tscn" id="10_fxwcl"]
+[ext_resource type="PackedScene" uid="uid://c6pmvjpktonre" path="res://entity/moving platform/moving_platform.tscn" id="11_fxwcl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r3fl7"]
 sky_top_color = Color(0.4586504, 0.47041243, 0.14559841, 1)
@@ -75,11 +76,12 @@ uv1_offset = Vector3(0.5, 0.5, 0.5)
 uv1_triplanar = true
 
 [node name="World" type="Node3D"]
+script = ExtResource("1_world")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_i5arm")
 
-[node name="Player" parent="." instance=ExtResource("3_wygdx")]
+[node name="PlayerSpawnPoint" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8201668, 1.2299174, 3.8285599)
 
 [node name="SpotLight3D" type="SpotLight3D" parent="."]
@@ -154,4 +156,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4856031, 0.24568641, -5.100
 [node name="Button" parent="." instance=ExtResource("9_ke1pg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.1766675, 1.7622054, -1.7301192)
 
+[node name="Moving platform" parent="." instance=ExtResource("11_fxwcl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3954964, 2.3145561, -6.7316456)
+
+[node name="Button2" parent="." instance=ExtResource("9_ke1pg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.752934, 0.72991765, -0.8728819)
+
 [connection signal="_use" from="Button" to="Door" method="use"]
+[connection signal="_use" from="Button2" to="Moving platform" method="_use"]
+[connection signal="_use" from="Button2" to="Moving platform" method="use"]
