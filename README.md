@@ -2,3 +2,4 @@
 Разогревочный проект перед будущими еще более прогревочноми проектами ^_^
 Роуг лайк игра с боевой системой в духе соулс лайков, но от первого лица(надеюсь выйдет адекватно)
 ![1](https://tenor.com/view/agartha-vril-ashtar-sheran-gif-10695907235911658484)
+<div class="tenor-gif-embed" data-postid="10695907235911658484" data-share-method="host" data-aspect-ratio="0.799197" data-width="100%"><a href="https://tenor.com/view/agartha-vril-ashtar-sheran-gif-10695907235911658484">Agartha Vril GIF</a>from <a href="https://tenor.com/search/agartha-gifs">Agartha GIFs</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
