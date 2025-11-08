@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://csvnxwbpljvax"]
+[gd_scene load_steps=21 format=3 uid="uid://csvnxwbpljvax"]
 
 [ext_resource type="Script" uid="uid://dg7ljbob3vk5" path="res://entity/player/player.gd" id="1_4flbx"]
 [ext_resource type="PackedScene" uid="uid://10np7jhfu3ao" path="res://components/Interaction Array/interact_ray.tscn" id="2_onrkg"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://bigojiqyyv32n" path="res://components/AbilitySystem/ability_component.gd" id="9_ability_component"]
 [ext_resource type="Script" uid="uid://b37c865k33vto" path="res://components/AbilitySystem/Abilities/dash_ability.gd" id="10_dash"]
 [ext_resource type="Script" uid="uid://u7rd37ohfey4" path="res://components/AbilitySystem/Abilities/fireball_ability.gd" id="11_fireball"]
+[ext_resource type="Script" uid="uid://b7wju1to5e3f3" path="res://components/TeamComponent/team_component.gd" id="12_wltfy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
 
@@ -193,6 +194,11 @@ cooldown = 0.0
 
 [node name="FireballAbility" type="Node" parent="AbilityComponent"]
 script = ExtResource("11_fireball")
+
+[node name="TeamComponent" type="Node" parent="."]
+script = ExtResource("12_wltfy")
+team = 3
+metadata/_custom_type_script = "uid://b7wju1to5e3f3"
 
 [connection signal="health_changed" from="health_component" to="Control" method="_on_health_component_health_changed"]
 

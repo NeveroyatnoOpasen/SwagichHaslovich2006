@@ -1,16 +1,57 @@
 extends CharacterBody3D
 
+# Movement parameters
+@export_group("Movement")
 @export var speed := 6.0
 @export var jump_velocity := 5.0
+
+# Camera parameters
+@export_group("Camera")
 @export var mouse_sensitivity := 0.003
 @export var max_pitch_deg := 85.0
 @export var tilt_amount := 0.1  # Сила наклона камеры
 @export var tilt_speed := 5.0   # Скорость возврата камеры в исходное положение
 
+# Health parameters
+@export_group("Health")
+@export var max_health: float = 100.0
+
+# Team parameters
+@export_group("Team")
+@export var team: TeamComponent.Team = TeamComponent.Team.REGULAR
+
+# Combat parameters
+@export_group("Combat")
+@export var enable_combo: bool = true
+@export var max_combo_count: int = 3
+@export var combo_window: float = 0.5
+@export var allow_air_attack: bool = false
+@export var stop_movement_on_attack: bool = true
+
+# Weapon parameters (Light Attack)
+@export_group("Weapon - Light Attack")
+@export var light_damage: float = 20.0
+@export var light_knockback: float = 5.0
+@export var light_attack_duration: float = 0.3
+@export var light_active_start: float = 0.1
+@export var light_active_end: float = 0.25
+@export var light_cooldown: float = 0.3
+
+# Weapon parameters (Heavy Attack)
+@export_group("Weapon - Heavy Attack")
+@export var heavy_damage: float = 50.0
+@export var heavy_knockback: float = 10.0
+@export var heavy_attack_duration: float = 0.6
+@export var heavy_active_start: float = 0.2
+@export var heavy_active_end: float = 0.5
+@export var heavy_cooldown: float = 0.8
+
 @onready var pivot: Node3D = $Pivot
 @onready var camera: Camera3D = $Pivot/Camera3D  # Предполагаем, что камера - дочерний объект Pivot
 @onready var combat_component: CombatComponent = $CombatComponent
 @onready var health_component: HealthComponent = $health_component
+@onready var team_component: TeamComponent = $TeamComponent
+@onready var melee_weapon: MeleeWeaponComponent = $MeleeWeaponComponent
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 
@@ -22,6 +63,9 @@ var current_tilt := 0.0  # Текущий наклон камеры
 var mouse_input := Vector2.ZERO
 
 func _ready() -> void:
+	# Синхронизируем экспортные переменные с компонентами
+	_sync_component_values()
+
 	# Захватываем курсор и скрываем его
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
@@ -34,6 +78,42 @@ func _ready() -> void:
 	# Подключаем сигналы здоровья
 	if health_component:
 		health_component.health_depleted.connect(_on_health_depleted)
+
+# Синхронизация экспортных переменных с компонентами
+func _sync_component_values() -> void:
+	# Health Component
+	if health_component:
+		health_component.max_health = max_health
+
+	# Team Component
+	if team_component:
+		team_component.team = team
+
+	# Combat Component
+	if combat_component:
+		combat_component.enable_combo = enable_combo
+		combat_component.max_combo_count = max_combo_count
+		combat_component.combo_window = combo_window
+		combat_component.allow_air_attack = allow_air_attack
+		combat_component.stop_movement_on_attack = stop_movement_on_attack
+
+	# Melee Weapon Component
+	if melee_weapon:
+		# Light attack
+		melee_weapon.light_damage = light_damage
+		melee_weapon.light_knockback = light_knockback
+		melee_weapon.light_attack_duration = light_attack_duration
+		melee_weapon.light_active_start = light_active_start
+		melee_weapon.light_active_end = light_active_end
+		melee_weapon.light_cooldown = light_cooldown
+
+		# Heavy attack
+		melee_weapon.heavy_damage = heavy_damage
+		melee_weapon.heavy_knockback = heavy_knockback
+		melee_weapon.heavy_attack_duration = heavy_attack_duration
+		melee_weapon.heavy_active_start = heavy_active_start
+		melee_weapon.heavy_active_end = heavy_active_end
+		melee_weapon.heavy_cooldown = heavy_cooldown
 
 func _input(event) -> void:
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:

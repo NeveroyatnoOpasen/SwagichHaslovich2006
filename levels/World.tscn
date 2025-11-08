@@ -102,7 +102,7 @@ spot_range = 9.924234
 spot_angle = 33.8
 
 [node name="Enemy" parent="." instance=ExtResource("8_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.764153, 3.3004055, 7.216904)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.373531, 3.0407133, 14.0595875)
 
 [node name="Enemy2" parent="." instance=ExtResource("8_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.89952, 3.9312859, 3.3841286)
@@ -180,6 +180,10 @@ offset_left = -1.0
 offset_top = -1.0
 offset_right = -1.0
 offset_bottom = -1.0
+
+[node name="Enemy3" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3596425, 4.8901844, 24.938908)
+team = 0
 
 [connection signal="_use" from="Button" to="Door" method="use"]
 [connection signal="_use" from="Button2" to="Moving platform" method="use"]

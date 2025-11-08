@@ -13,7 +13,7 @@ func _process(delta: float) -> void:
 	var path = get_node("PathFollow3D")
 	if toggle:
 		path.progress_ratio += delta * speed * direction
-		print(path.progress_ratio, direction)
+	#	print(path.progress_ratio, direction)
 		if path.progress_ratio >= 0.9 and direction != -1:
 			toggle = false
 			direction = -1

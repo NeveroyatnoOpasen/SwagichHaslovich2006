@@ -6,8 +6,8 @@ enum State {
 	IDLE,      # Стоит на месте, осматривается
 	PATROL,    # Патрулирование между точками
 	ALERT,     # Заметил что-то подозрительное
-	CHASE,     # Преследует игрока
-	ATTACK,    # Атакует игрока
+	CHASE,     # Преследует враждебную цель
+	ATTACK,    # Атакует враждебную цель
 	RETREAT    # Отступает (низкое HP)
 }
 
@@ -19,6 +19,15 @@ enum State {
 @onready var melee_weapon: MeleeWeaponComponent = $MeleeWeaponComponent
 @onready var vision_ray: RayCast3D = $VisionRay
 @onready var detection_area: Area3D = $DetectionArea
+@onready var team_component: TeamComponent = $TeamComponent
+
+# Health parameters
+@export_group("Health")
+@export var max_health: float = 100.0
+
+# Team parameters
+@export_group("Team")
+@export var team: TeamComponent.Team = TeamComponent.Team.MOBS
 
 # Movement parameters
 @export_group("Movement")
@@ -43,22 +52,44 @@ enum State {
 @export var patrol_points: Array[Vector3] = []  # Точки патрулирования
 @export var patrol_wait_time: float = 2.0       # Время ожидания на точке
 
+# Weapon parameters (Light Attack)
+@export_group("Weapon - Light Attack")
+@export var light_damage: float = 15.0
+@export var light_knockback: float = 3.0
+@export var light_attack_duration: float = 0.3
+@export var light_active_start: float = 0.1
+@export var light_active_end: float = 0.25
+@export var light_cooldown: float = 0.4
+
+# Weapon parameters (Heavy Attack)
+@export_group("Weapon - Heavy Attack")
+@export var heavy_damage: float = 35.0
+@export var heavy_knockback: float = 8.0
+@export var heavy_attack_duration: float = 0.6
+@export var heavy_active_start: float = 0.2
+@export var heavy_active_end: float = 0.5
+@export var heavy_cooldown: float = 1.0
+
 # Internal state
 var current_state: State = State.IDLE
-var player: CharacterBody3D = null
+var current_target: CharacterBody3D = null  # Текущая цель (враг)
 var target_position: Vector3
-var last_known_player_pos: Vector3
-var can_see_player: bool = false
-var time_since_seen_player: float = 0.0
+var last_known_target_pos: Vector3
+var can_see_target: bool = false
+var time_since_seen_target: float = 0.0
 var attack_timer: float = 0.0
 var patrol_index: int = 0
 var patrol_wait_timer: float = 0.0
 var idle_rotation_timer: float = 0.0
+var potential_targets: Array[CharacterBody3D] = []  # Потенциальные враги в зоне обнаружения
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var hit_flash_time: float = 0.0
 var current_speed: float = 0.0 
 func _ready() -> void:
+	# Синхронизируем экспортные переменные с компонентами
+	_sync_component_values()
+
 	# Подключаем сигналы
 	if health_component:
 		health_component.health_changed.connect(_on_health_changed)
@@ -83,20 +114,33 @@ func _ready() -> void:
 	else:
 		change_state(State.IDLE)
 
-	# Найти игрока в сцене (отложенно, чтобы игрок успел заспавниться)
-	call_deferred("_find_player")
+# Синхронизация экспортных переменных с компонентами
+func _sync_component_values() -> void:
+	# Health Component
+	if health_component:
+		health_component.max_health = max_health
 
-func _find_player() -> void:
-	# Найти игрока в сцене (но не преследовать сразу)
-	var players = get_tree().get_nodes_in_group("Player")
-	if players.size() > 0:
-		player = players[0]
-		print("Enemy found player: ", player.name)
-	else:
-		print("Enemy: No player found in scene yet")
-		# Попробуем снова через секунду
-		await get_tree().create_timer(1.0).timeout
-		_find_player()
+	# Team Component
+	if team_component:
+		team_component.team = team
+
+	# Melee Weapon Component
+	if melee_weapon:
+		# Light attack
+		melee_weapon.light_damage = light_damage
+		melee_weapon.light_knockback = light_knockback
+		melee_weapon.light_attack_duration = light_attack_duration
+		melee_weapon.light_active_start = light_active_start
+		melee_weapon.light_active_end = light_active_end
+		melee_weapon.light_cooldown = light_cooldown
+
+		# Heavy attack
+		melee_weapon.heavy_damage = heavy_damage
+		melee_weapon.heavy_knockback = heavy_knockback
+		melee_weapon.heavy_attack_duration = heavy_attack_duration
+		melee_weapon.heavy_active_start = heavy_active_start
+		melee_weapon.heavy_active_end = heavy_active_end
+		melee_weapon.heavy_cooldown = heavy_cooldown
 
 # ============================================================================
 # STATE MACHINE
@@ -129,9 +173,9 @@ func change_state(new_state: State) -> void:
 
 func update_state(delta: float) -> void:
 	# Check for retreat condition
-	if health_component and health_component.health < health_component.max_health * retreat_health_percent:
-		if current_state != State.RETREAT:
-			change_state(State.RETREAT)
+	#if health_component and health_component.health < health_component.max_health * retreat_health_percent:
+	#	if current_state != State.RETREAT:
+	#		change_state(State.RETREAT)
 
 	match current_state:
 		State.IDLE:
@@ -152,8 +196,8 @@ func _state_idle(delta: float) -> void:
 	idle_rotation_timer += delta
 	rotation.y += delta * 0.5
 
-	# Если увидел игрока - переходим в chase
-	if can_see_player:
+	# Если увидел врага - переходим в chase
+	if can_see_target and current_target:
 		change_state(State.CHASE)
 	elif patrol_points.size() > 0 and idle_rotation_timer > 3.0:
 		change_state(State.PATROL)
@@ -163,8 +207,8 @@ func _state_patrol(delta: float) -> void:
 		change_state(State.IDLE)
 		return
 
-	# Если увидел игрока - chase
-	if can_see_player:
+	# Если увидел врага - chase
+	if can_see_target and current_target:
 		change_state(State.CHASE)
 		return
 
@@ -179,67 +223,69 @@ func _state_patrol(delta: float) -> void:
 		move_towards_target(target_position)
 
 func _state_alert(delta: float) -> void:
-	# Идет к последней известной позиции игрока
-	if can_see_player:
+	# Идет к последней известной позиции цели
+	if can_see_target and current_target:
 		change_state(State.CHASE)
 		return
 
-	time_since_seen_player += delta
+	time_since_seen_target += delta
 
-	if global_position.distance_to(last_known_player_pos) < 2.0:
+	if global_position.distance_to(last_known_target_pos) < 2.0:
 		# Достигли последней точки - осматриваемся
 		rotation.y += delta * 2.0
-		if time_since_seen_player > lose_sight_time:
+		if time_since_seen_target > lose_sight_time:
 			change_state(State.IDLE)
 	else:
-		move_towards_target(last_known_player_pos)
+		move_towards_target(last_known_target_pos)
 
 func _state_chase(delta: float) -> void:
-	if not player:
+	if not current_target or not is_instance_valid(current_target):
 		change_state(State.IDLE)
+		current_target = null
 		return
 
-	if not can_see_player:
-		time_since_seen_player += delta
-		if time_since_seen_player > lose_sight_time:
+	if not can_see_target:
+		time_since_seen_target += delta
+		if time_since_seen_target > lose_sight_time:
 			change_state(State.ALERT)
 			return
 	else:
-		time_since_seen_player = 0.0
-		last_known_player_pos = player.global_position
+		time_since_seen_target = 0.0
+		last_known_target_pos = current_target.global_position
 
-	var distance = global_position.distance_to(player.global_position)
+	var distance = global_position.distance_to(current_target.global_position)
 
 	# Если близко - атакуем
 	if distance <= attack_range:
 		change_state(State.ATTACK)
 	else:
-		move_towards_target(player.global_position)
+		move_towards_target(current_target.global_position)
 
 func _state_attack(delta: float) -> void:
-	if not player:
+	if not current_target or not is_instance_valid(current_target):
 		change_state(State.IDLE)
+		current_target = null
 		return
 
 	attack_timer -= delta
 
-	var distance = global_position.distance_to(player.global_position)
+	var distance = global_position.distance_to(current_target.global_position)
 
-	# Если игрок убежал далеко
+	# Если цель убежала далеко
 	if distance > attack_range * 1.5:
 		change_state(State.CHASE)
 		return
 
-	# Поворачиваемся к игроку
-	look_at_target(player.global_position)
+	# Поворачиваемся к цели
+	look_at_target(current_target.global_position)
 
 	# Управление дистанцией
 	if distance < min_attack_range:
 		# Слишком близко - отходим
-		move_away_from_target(player.global_position, delta)
+		move_away_from_target(current_target.global_position, delta)
 	elif distance > attack_range:
 		# Слишком далеко - подходим
-		move_towards_target(player.global_position)
+		move_towards_target(current_target.global_position)
 	else:
 		# Оптимальная дистанция - атакуем
 		if attack_timer <= 0 and melee_weapon and melee_weapon.can_attack():
@@ -247,12 +293,13 @@ func _state_attack(delta: float) -> void:
 			attack_timer = attack_cooldown
 
 func _state_retreat(delta: float) -> void:
-	if not player:
+	if not current_target or not is_instance_valid(current_target):
 		change_state(State.IDLE)
+		current_target = null
 		return
 
-	# Убегаем от игрока
-	move_away_from_target(player.global_position, delta)
+	# Убегаем от цели
+	move_away_from_target(current_target.global_position, delta)
 
 	# Если здоровье восстановилось
 	if health_component and health_component.health > health_component.max_health * (retreat_health_percent + 0.1):
@@ -261,8 +308,8 @@ func _process(delta: float) -> void:
 	# Обновляем AI
 	update_state(delta)
 
-	# Проверяем видимость игрока
-	check_player_vision()
+	# Проверяем видимость враждебных целей
+	check_target_vision()
 
 	# Обработка эффекта вспышки при получении урона
 	if hit_flash_time > 0:
@@ -322,48 +369,95 @@ func _set_next_patrol_point() -> void:
 # VISION & DETECTION
 # ============================================================================
 
-func check_player_vision() -> void:
-	if not player or not vision_ray:
-		can_see_player = false
+func check_target_vision() -> void:
+	if not vision_ray or not team_component:
+		can_see_target = false
 		return
 
-	var distance_to_player = global_position.distance_to(player.global_position)
+	# Если у нас нет текущей цели или она мертва, ищем новую
+	if not current_target or not is_instance_valid(current_target):
+		current_target = _find_closest_hostile_target()
+
+	if not current_target:
+		can_see_target = false
+		return
+
+	var distance_to_target = global_position.distance_to(current_target.global_position)
 
 	# Проверка дистанции
-	if distance_to_player > vision_range:
-		can_see_player = false
+	if distance_to_target > vision_range:
+		can_see_target = false
 		return
 
 	# Проверка угла обзора
-	var direction_to_player = (player.global_position - global_position).normalized()
+	var direction_to_target = (current_target.global_position - global_position).normalized()
 	var forward = -global_transform.basis.z
-	var angle = rad_to_deg(forward.angle_to(direction_to_player))
+	var angle = rad_to_deg(forward.angle_to(direction_to_target))
 
 	if angle > vision_angle / 2.0:
-		can_see_player = false
+		can_see_target = false
 		return
 
 	# Проверка line of sight
-	vision_ray.look_at(player.global_position, Vector3.UP)
+	vision_ray.look_at(current_target.global_position, Vector3.UP)
 	vision_ray.force_raycast_update()
 
 	if vision_ray.is_colliding():
 		var collider = vision_ray.get_collider()
-		if collider == player:
-			can_see_player = true
+		if collider == current_target:
+			can_see_target = true
 		else:
-			can_see_player = false
+			can_see_target = false
 	else:
-		can_see_player = false
+		can_see_target = false
+
+func _find_closest_hostile_target() -> CharacterBody3D:
+	if not team_component:
+		return null
+
+	var closest_target: CharacterBody3D = null
+	var closest_distance: float = INF
+
+	# Проверяем все потенциальные цели в зоне обнаружения
+	for target in potential_targets:
+		if not is_instance_valid(target) or target == self:
+			continue
+
+		# Проверяем наличие TeamComponent у цели
+		if not target.has_node("TeamComponent"):
+			continue
+
+		var target_team: TeamComponent = target.get_node("TeamComponent")
+
+		# Проверяем враждебность
+		if team_component.is_hostile_to(target_team):
+			var distance = global_position.distance_to(target.global_position)
+			if distance < closest_distance:
+				closest_distance = distance
+				closest_target = target
+
+	return closest_target
 
 func _on_detection_area_entered(body: Node3D) -> void:
-	if body == player and current_state == State.IDLE:
-		# Услышал игрока поблизости - становимся настороже
-		change_state(State.ALERT)
-		last_known_player_pos = player.global_position
+	# Добавляем в список потенциальных целей
+	if body is CharacterBody3D and body != self:
+		if body.has_node("TeamComponent"):
+			var target_team: TeamComponent = body.get_node("TeamComponent")
+			if team_component and team_component.is_hostile_to(target_team):
+				if not potential_targets.has(body):
+					potential_targets.append(body)
+					print("Enemy detected potential hostile: ", body.name)
+
+				# Если были в IDLE - становимся настороже
+				if current_state == State.IDLE:
+					change_state(State.ALERT)
+					last_known_target_pos = body.global_position
 
 func _on_detection_area_exited(body: Node3D) -> void:
-	pass  # Можно добавить логику при выходе из зоны
+	# Убираем из списка потенциальных целей
+	if body is CharacterBody3D:
+		if potential_targets.has(body):
+			potential_targets.erase(body)
 
 # ============================================================================
 # COMBAT
@@ -393,7 +487,9 @@ func _on_health_changed(current_health: float, max_health: float, damaged: bool)
 
 		# Если получили урон и были в IDLE/PATROL - становимся агрессивными
 		if current_state == State.IDLE or current_state == State.PATROL:
-			if player:
+			# Попытаемся найти ближайшую враждебную цель
+			current_target = _find_closest_hostile_target()
+			if current_target:
 				change_state(State.CHASE)
 
 func _on_health_depleted() -> void:
