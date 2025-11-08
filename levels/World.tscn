@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://cgvpfct6wwpu"]
+[gd_scene load_steps=24 format=3 uid="uid://cgvpfct6wwpu"]
 
 [ext_resource type="Script" uid="uid://cnfovkk3iyo0b" path="res://levels/World.gd" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://dxw7cledbpiia" path="res://addons/proto-csgs/proto_csg_box_3d.tscn" id="5_lely3"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://yjolybe6ur3n" path="res://addons/proto-csgs/proto_csg_torus_3d.tscn" id="9_t2w4v"]
 [ext_resource type="PackedScene" uid="uid://bi06a3jhw5hdl" path="res://entity/door/Door.tscn" id="10_fxwcl"]
 [ext_resource type="PackedScene" uid="uid://c6pmvjpktonre" path="res://entity/moving platform/moving_platform.tscn" id="11_fxwcl"]
+[ext_resource type="PackedScene" uid="uid://e1uchhgfmyxn" path="res://levels/pause_menu.tscn" id="12_u5t8i"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_r3fl7"]
 sky_top_color = Color(0.4586504, 0.47041243, 0.14559841, 1)
@@ -162,6 +163,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.3954964, 2.3145561, -6.731
 [node name="Button2" parent="." instance=ExtResource("9_ke1pg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.752934, 0.72991765, -0.8728819)
 
+[node name="Spawn_Warrior" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.050519, 0.4341389, -0.09910452)
+gizmo_extents = 0.17
+
+[node name="Spawn_Rogue" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.2485256, 3.6669278, 7.326443)
+
+[node name="Spawn_Mage" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1401184, 3.4322336, 10.744271)
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PauseMenu" parent="CanvasLayer" instance=ExtResource("12_u5t8i")]
+offset_left = -1.0
+offset_top = -1.0
+offset_right = -1.0
+offset_bottom = -1.0
+
 [connection signal="_use" from="Button" to="Door" method="use"]
-[connection signal="_use" from="Button2" to="Moving platform" method="_use"]
 [connection signal="_use" from="Button2" to="Moving platform" method="use"]
+[connection signal="_use" from="Button2" to="Moving platform" method="_use"]

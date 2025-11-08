@@ -4,39 +4,38 @@ extends Node3D
 const PLAYER_SCENE = preload("res://entity/player/player.tscn")
 
 # Spawn marker for player
-@onready var player_spawn_point: Marker3D = $PlayerSpawnPoint
+@onready var spawn_warrior: Marker3D = $Spawn_Warrior
+@onready var spawn_rogue: Marker3D = $Spawn_Rogue
+@onready var spawn_mage: Marker3D = $Spawn_Mage
 
 func _ready() -> void:
 	# Spawn the player based on selected character
 	_spawn_player()
 
 func _spawn_player() -> void:
-	# Instantiate player from scene
 	var player = PLAYER_SCENE.instantiate()
-
-	# Get character data from GameState
 	var character_data = GameState.get_character_data(GameState.selected_character)
 
-	# Set player position
-	if player_spawn_point:
-		player.global_position = player_spawn_point.global_position
-	else:
-		player.global_position = GameState.spawn_position
+	# Выбор позиции спавна по классу
+	match GameState.selected_character:
+		GameState.CharacterType.WARRIOR:
+			player.global_position = spawn_warrior.global_position
+		GameState.CharacterType.ROGUE:
+			player.global_position = spawn_rogue.global_position
+		GameState.CharacterType.MAGE:
+			player.global_position = spawn_mage.global_position
+		_:
+			player.global_position = Vector3.ZERO
 
-	# Apply character-specific properties
+	# --- Применяем параметры персонажа ---
 	if player.has_node("health_component"):
 		var health_component = player.get_node("health_component")
-		# Set max_health before the component's _ready() is called
 		health_component.max_health = character_data["max_health"]
 
-	# Set player speed
 	if "SPEED" in player:
 		player.SPEED = character_data["speed"]
 
-	# Apply character-specific abilities
 	_apply_character_abilities(player, character_data)
-
-	# Add player to scene
 	add_child(player)
 
 	print("Player spawned as ", character_data["name"])
