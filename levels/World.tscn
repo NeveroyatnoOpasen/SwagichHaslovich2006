@@ -102,7 +102,22 @@ spot_range = 9.924234
 spot_angle = 33.8
 
 [node name="Enemy" parent="." instance=ExtResource("8_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.373531, 3.0407133, 14.0595875)
+transform = Transform3D(-0.9999896, 0, -0.0045553604, 0, 1, 0, 0.0045553604, 0, -0.9999896, -12.373531, 1.4333858, 14.0595875)
+
+[node name="Enemy8" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(-0.9999896, 0, -0.0045553604, 0, 1, 0, 0.0045553604, 0, -0.9999896, -14.989482, 1.4333858, 14.0595875)
+
+[node name="Enemy9" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(-0.9999896, 0, -0.0045553604, 0, 1, 0, 0.0045553604, 0, -0.9999896, -16.989483, 1.4333858, 14.0595875)
+
+[node name="Enemy10" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(-0.9999896, 0, -0.0045553604, 0, 1, 0, 0.0045553604, 0, -0.9999896, -9.628243, 1.4333858, 14.0595875)
+
+[node name="Enemy11" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(-0.9999896, 0, -0.0045553604, 0, 1, 0, 0.0045553604, 0, -0.9999896, -6.7820435, 1.4333858, 14.0595875)
+
+[node name="Enemy12" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(-0.9999896, 0, -0.0045553604, 0, 1, 0, 0.0045553604, 0, -0.9999896, -3.18182, 1.4333858, 14.0595875)
 
 [node name="Enemy2" parent="." instance=ExtResource("8_enemy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.89952, 3.9312859, 3.3841286)
@@ -182,7 +197,23 @@ offset_right = -1.0
 offset_bottom = -1.0
 
 [node name="Enemy3" parent="." instance=ExtResource("8_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3596425, 4.8901844, 24.938908)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.1440573, 1.606957, 24.938908)
+team = 0
+
+[node name="Enemy4" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.271575, 1.606957, 24.938908)
+team = 0
+
+[node name="Enemy5" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.327851, 1.606957, 24.938908)
+team = 0
+
+[node name="Enemy6" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.427954, 1.606957, 24.938908)
+team = 0
+
+[node name="Enemy7" parent="." instance=ExtResource("8_enemy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.493993, 1.606957, 24.938908)
 team = 0
 
 [connection signal="_use" from="Button" to="Door" method="use"]

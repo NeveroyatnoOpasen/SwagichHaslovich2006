@@ -47,6 +47,13 @@ enum State {
 @export var lose_sight_time: float = 5.0      # Время до потери цели
 @export var attack_cooldown: float = 2.0      # Кулдаун между атаками
 
+# Performance settings
+@export_group("Performance")
+@export var vision_check_interval: float = 0.1      # Интервал проверки зрения (сек)
+@export var navigation_update_interval: float = 0.2 # Интервал обновления пути (сек)
+@export var target_search_interval: float = 0.5     # Интервал поиска новой цели (сек)
+@export var enable_debug_prints: bool = false       # Включить debug сообщения
+
 # Patrol parameters
 @export_group("Patrol")
 @export var patrol_points: Array[Vector3] = []  # Точки патрулирования
@@ -82,6 +89,12 @@ var patrol_index: int = 0
 var patrol_wait_timer: float = 0.0
 var idle_rotation_timer: float = 0.0
 var potential_targets: Array[CharacterBody3D] = []  # Потенциальные враги в зоне обнаружения
+
+# Performance timers
+var vision_check_timer: float = 0.0
+var navigation_update_timer: float = 0.0
+var target_search_timer: float = 0.0
+var cached_navigation_target: Vector3 = Vector3.ZERO
 
 var gravity: float = ProjectSettings.get_setting("physics/3d/default_gravity")
 var hit_flash_time: float = 0.0
@@ -150,7 +163,8 @@ func change_state(new_state: State) -> void:
 	if current_state == new_state:
 		return
 
-	print("Enemy state: ", State.keys()[current_state], " -> ", State.keys()[new_state])
+	if enable_debug_prints:
+		print("Enemy state: ", State.keys()[current_state], " -> ", State.keys()[new_state])
 	current_state = new_state
 
 	# State entry logic
@@ -308,8 +322,18 @@ func _process(delta: float) -> void:
 	# Обновляем AI
 	update_state(delta)
 
-	# Проверяем видимость враждебных целей
-	check_target_vision()
+	# Обновляем таймеры производительности
+	if vision_check_timer >= 0:
+		vision_check_timer += delta
+	if navigation_update_timer > 0:
+		navigation_update_timer -= delta
+	if target_search_timer > 0:
+		target_search_timer -= delta
+
+	# Проверяем видимость враждебных целей (с интервалом для оптимизации)
+	if vision_check_timer >= vision_check_interval:
+		vision_check_timer = 0.0
+		check_target_vision()
 
 	# Обработка эффекта вспышки при получении урона
 	if hit_flash_time > 0:
@@ -335,7 +359,19 @@ func move_towards_target(target: Vector3) -> void:
 	if not nav:
 		return
 
-	nav.target_position = target
+	# Обновляем путь только если прошло достаточно времени или цель сильно изменилась
+	var should_update_path = false
+	if navigation_update_timer <= 0.0:
+		should_update_path = true
+		navigation_update_timer = navigation_update_interval
+	elif cached_navigation_target.distance_to(target) > 2.0:  # Цель сместилась больше чем на 2 метра
+		should_update_path = true
+		navigation_update_timer = navigation_update_interval
+
+	if should_update_path:
+		nav.target_position = target
+		cached_navigation_target = target
+
 	var next_location = nav.get_next_path_position()
 	var direction = (next_location - global_position).normalized()
 
@@ -374,9 +410,11 @@ func check_target_vision() -> void:
 		can_see_target = false
 		return
 
-	# Если у нас нет текущей цели или она мертва, ищем новую
+	# Если у нас нет текущей цели или она мертва, ищем новую (с интервалом)
 	if not current_target or not is_instance_valid(current_target):
-		current_target = _find_closest_hostile_target()
+		if target_search_timer <= 0.0:
+			current_target = _find_closest_hostile_target()
+			target_search_timer = target_search_interval
 
 	if not current_target:
 		can_see_target = false
@@ -412,18 +450,18 @@ func check_target_vision() -> void:
 		can_see_target = false
 
 func _find_closest_hostile_target() -> CharacterBody3D:
-	if not team_component:
+	if not team_component or potential_targets.is_empty():
 		return null
 
 	var closest_target: CharacterBody3D = null
-	var closest_distance: float = INF
+	var closest_distance: float = vision_range * vision_range  # Используем квадрат для оптимизации
 
 	# Проверяем все потенциальные цели в зоне обнаружения
 	for target in potential_targets:
 		if not is_instance_valid(target) or target == self:
 			continue
 
-		# Проверяем наличие TeamComponent у цели
+		# Проверяем наличие TeamComponent у цели (кешируем результат)
 		if not target.has_node("TeamComponent"):
 			continue
 
@@ -431,9 +469,10 @@ func _find_closest_hostile_target() -> CharacterBody3D:
 
 		# Проверяем враждебность
 		if team_component.is_hostile_to(target_team):
-			var distance = global_position.distance_to(target.global_position)
-			if distance < closest_distance:
-				closest_distance = distance
+			# Используем distance_squared_to для оптимизации (избегаем sqrt)
+			var distance_sq = global_position.distance_squared_to(target.global_position)
+			if distance_sq < closest_distance:
+				closest_distance = distance_sq
 				closest_target = target
 
 	return closest_target
@@ -446,7 +485,8 @@ func _on_detection_area_entered(body: Node3D) -> void:
 			if team_component and team_component.is_hostile_to(target_team):
 				if not potential_targets.has(body):
 					potential_targets.append(body)
-					print("Enemy detected potential hostile: ", body.name)
+					if enable_debug_prints:
+						print("Enemy detected potential hostile: ", body.name)
 
 				# Если были в IDLE - становимся настороже
 				if current_state == State.IDLE:
@@ -473,14 +513,17 @@ func perform_attack() -> void:
 
 	# Выполняем атаку
 	melee_weapon.try_attack(MeleeWeaponComponent.AttackType.HEAVY)
-	print("Enemy attacking!")
+
+	if enable_debug_prints:
+		print("Enemy attacking!")
 
 # ============================================================================
 # EVENT HANDLERS
 # ============================================================================
 
 func _on_health_changed(current_health: float, max_health: float, damaged: bool) -> void:
-	print("Здоровье врага: ", current_health, "/", max_health)
+	if enable_debug_prints:
+		print("Здоровье врага: ", current_health, "/", max_health)
 
 	if damaged:
 		_play_hit_effect()
@@ -493,7 +536,8 @@ func _on_health_changed(current_health: float, max_health: float, damaged: bool)
 				change_state(State.CHASE)
 
 func _on_health_depleted() -> void:
-	print("Враг убит")
+	if enable_debug_prints:
+		print("Враг убит")
 	queue_free()
 
 func _on_hit_received(damage: float, knockback_force: float, attacker_position: Vector3) -> void:
