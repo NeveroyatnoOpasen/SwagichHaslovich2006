@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://cgvpfct6wwpu"]
+[gd_scene load_steps=30 format=3 uid="uid://cgvpfct6wwpu"]
 
 [ext_resource type="Script" uid="uid://cnfovkk3iyo0b" path="res://levels/World.gd" id="1_world"]
 [ext_resource type="PackedScene" uid="uid://c2qm3vxj8h5tp" path="res://entity/npc/test_npc.tscn" id="2_c002t"]
@@ -80,13 +80,11 @@ albedo_texture = ExtResource("8_t2w4v")
 uv1_offset = Vector3(0.5, 0.5, 0.5)
 uv1_triplanar = true
 
-[sub_resource type="Resource" id="Resource_u2hcs"]
+[sub_resource type="PrismMesh" id="PrismMesh_5rar6"]
+
+[sub_resource type="Resource" id="Resource_l6rdf"]
 script = ExtResource("16_q8iuw")
 metadata/_custom_type_script = "uid://bjphq5yad4kj6"
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_u2hcs"]
-
-[sub_resource type="PrismMesh" id="PrismMesh_5rar6"]
 
 [node name="World" type="Node3D"]
 script = ExtResource("1_world")
@@ -238,17 +236,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.712321, 1.7460613, -6.7055
 text = "Interactable objects
 "
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.704976, 2.318078, -5.888461)
-script = ExtResource("15_u2hcs")
-item_resource = SubResource("Resource_u2hcs")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-shape = SubResource("BoxShape3D_u2hcs")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.593014, 1.7460613, -8.54251)
 mesh = SubResource("PrismMesh_5rar6")
-skeleton = NodePath("../../Label3D")
+skeleton = NodePath("../Label3D")
+script = ExtResource("15_u2hcs")
+item_resource = SubResource("Resource_l6rdf")
+prompt_message = null
 
 [connection signal="_use" from="Button" to="Door" method="use"]
 [connection signal="_use" from="Button2" to="Moving platform" method="use"]

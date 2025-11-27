@@ -145,7 +145,7 @@ func _ready() -> void:
 # DashAbility
 func _ready() -> void:
 	super._ready()  # ← Сначала вызываем родительский _ready()
-	                # Это выполнит set_process(false)
+					# Это выполнит set_process(false)
 
 	# Затем наша инициализация
 	ability_name = "Dash"
@@ -657,13 +657,13 @@ BaseAbility                      ├─ CombatComponent
   ├─ DashAbility                 ├─ AbilityComponent
   ├─ FireballAbility             │   ├─ DashAbility
   └─ HealAbility                 │   └─ FireballAbility
-                                 ├─ HurtboxComponent
+								 ├─ HurtboxComponent
 Node                             └─ MeleeWeaponComponent
   ↓
 Interactable                     Enemy (CharacterBody3D)
   ├─ Door                        ├─ HealthComponent
   └─ Button                      ├─ HurtboxComponent
-                                 ├─ MeleeWeaponComponent
+								 ├─ MeleeWeaponComponent
 Node                             └─ NavigationAgent3D
   ↓
 HealthComponent

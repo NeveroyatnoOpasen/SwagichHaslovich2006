@@ -74,6 +74,37 @@ A comprehensive melee combat system with 4 main components (documented in Russia
 - Displays prompt messages via attached Label
 - See `interaction_system.md` for details
 
+#### Dialog System (`components/DialogoeSystem/`)
+
+A comprehensive dialog system with branching conversations, conditions, and event integration (documented in `components/DialogoeSystem/README.md`):
+
+1. **`DialogManager`** (Autoload) - Global dialog manager
+   - Loads dialogs from JSON database
+   - Manages dialog flow and state
+   - Event system with callable handlers
+   - Condition checking (variables, items, quests)
+   - Signals: `dialog_started(dialog_id)`, `dialog_ended`, `dialog_event(event_name, params)`
+
+2. **`DialogUI`** (CanvasLayer) - Visual interface
+   - Character name display
+   - RichTextLabel for dialog text (BBCode support)
+   - Dynamic choice button generation
+   - Auto-hides when dialog ends
+
+3. **`NPCDialogComponent`** (Node) - NPC dialog handler
+   - Manages player interaction
+   - Blocks player movement during dialog
+   - Releases mouse cursor for UI interaction
+   - Integrates with Interactable system
+
+4. **`NPCBase`** (Interactable) - Base class for dialog NPCs
+   - Extends Interactable for interact_ray compatibility
+   - Simple setup via exported variables
+   - Example: `test_merchant.gd`
+
+**Dialog format**: JSON-based with support for branching, conditions (`reputation:>=:10`, `has_item:key`), events, and parameters
+**Integration**: Works seamlessly with existing interaction system - player aims at NPC and presses E
+
 ### Entity Structure
 
 #### Player (`entity/player/player.gd`)
@@ -87,9 +118,19 @@ A comprehensive melee combat system with 4 main components (documented in Russia
   - Integrated combat system (CombatComponent)
   - Health system (HealthComponent)
   - Interaction system (InteractRay)
+  - Movement control via `set_movement_enabled(bool)` - used by dialog system
 - Movement can be blocked during attacks if `stop_movement_on_attack` is enabled
+- Movement automatically blocked during dialogs
 - Node hierarchy: Player → Pivot → Camera3D
 - Combat integrated via player.gd lines 52-59
+
+#### NPC (`entity/npc/`)
+- **`NPCBase`** - Base class for friendly NPCs with dialog support
+- Extends Interactable for seamless integration with interact_ray
+- Configured via exported variables: `npc_display_name`, `starting_dialog_id`
+- Example implementation: `test_merchant.gd` demonstrates event handling
+- Requires `NPCDialogComponent` as child node
+- Test scene available: `test_npc.tscn`
 
 #### Enemy (`entity/enemy/enemy.gd`)
 - Extends CharacterBody3D
@@ -138,7 +179,7 @@ Components are typically added as child nodes and referenced via `@onready`:
 Components communicate via signals. Connect in `_ready()`:
 ```gdscript
 if health_component:
-    health_component.health_depleted.connect(_on_health_depleted)
+	health_component.health_depleted.connect(_on_health_depleted)
 ```
 
 **For comprehensive signals documentation**, see `Docs/godot_signals_cheatsheet.md`

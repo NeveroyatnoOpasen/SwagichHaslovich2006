@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://c2qm3vxj8h5tp"]
+
+[ext_resource type="Script" uid="uid://rqgldyc4df1" path="res://entity/npc/test_merchant.gd" id="1_merchant"]
+[ext_resource type="Script" uid="uid://cd8f4o7j7ty1m" path="res://components/DialogoeSystem/npc_dialog_component.gd" id="2_dialog"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1"]
+
+[node name="TestMerchant" type="Node3D"]
+script = ExtResource("1_merchant")
+
+[node name="Body" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_1")
+
+[node name="NPCDialogComponent" type="Node" parent="."]
+script = ExtResource("2_dialog")
+
+[node name="Label3D" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+pixel_size = 0.01
+billboard = 1
+text = "Торговец"

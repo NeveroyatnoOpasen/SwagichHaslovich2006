@@ -1,0 +1,109 @@
+{
+  "dialogs": {
+	"merchant_handy_shit": {
+		"character": "Торговец",
+		"text": "Хуй залупа хер",
+		"choices": [
+			{
+				"text": "Nigga",
+				"next": "merchant_greeting"
+			}
+		]
+	},
+	"merchant_greeting": {
+	  "character": "Торговец",
+	  "text": "Приветствую, путник! Чем могу помочь?",
+	  "choices": [
+		{
+			"text": "Test SHIT",
+			"next": "merchant_handy_shit"
+		},
+		{
+		  "text": "Показать товары",
+		  "next": "merchant_shop",
+		  "event": "open_shop"
+		},
+		{
+		  "text": "Есть работа?",
+		  "next": "merchant_quest",
+		  "condition": "reputation:>=:5"
+		},
+		{
+		  "text": "Просто поболтать",
+		  "next": "merchant_smalltalk"
+		},
+		{
+		  "text": "Прощай",
+		  "next": null
+		}
+	  ]
+	},
+	
+	"merchant_shop": {
+	  "character": "Торговец",
+	  "text": "Вот мои лучшие товары! Взгляни.",
+	  "auto_events": ["show_shop_ui"],
+	  "choices": [
+		{
+		  "text": "Вернуться к разговору",
+		  "next": "merchant_greeting"
+		}
+	  ]
+	},
+	
+	"merchant_quest": {
+	  "character": "Торговец",
+	  "text": "Да, как раз нужна помощь! Доставишь посылку в соседний город?",
+	  "choices": [
+		{
+		  "text": "Конечно, помогу!",
+		  "next": "merchant_quest_accept",
+		  "event": "start_quest",
+		  "params": {"quest_id": "delivery_quest"}
+		},
+		{
+		  "text": "Извини, не сейчас",
+		  "next": "merchant_greeting"
+		}
+	  ]
+	},
+	
+	"merchant_quest_accept": {
+	  "character": "Торговец",
+	  "text": "Отлично! Вот посылка. Отнеси её трактирщику в Ривервуде.",
+	  "auto_events": ["add_item:package", "update_reputation:5"],
+	  "choices": [
+		{
+		  "text": "Сделаю!",
+		  "next": null
+		}
+	  ]
+	},
+	
+	"merchant_smalltalk": {
+	  "character": "Торговец",
+	  "text": "Погода последнее время странная... Говорят, на севере что-то происходит.",
+	  "choices": [
+		{
+		  "text": "Расскажи подробнее",
+		  "next": "merchant_rumor"
+		},
+		{
+		  "text": "Вернуться",
+		  "next": "merchant_greeting"
+		}
+	  ]
+	},
+	
+	"merchant_rumor": {
+	  "character": "Торговец",
+	  "text": "Слышал от путников про странные огни в горах. Местные боятся туда ходить.",
+	  "choices": [
+		{
+		  "text": "Интересно... (Вернуться)",
+		  "next": "merchant_greeting"
+		}
+	  ]
+	}
+  }
+}

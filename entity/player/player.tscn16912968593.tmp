@@ -1,0 +1,239 @@
+[gd_scene load_steps=22 format=3 uid="uid://csvnxwbpljvax"]
+
+[ext_resource type="Script" uid="uid://dg7ljbob3vk5" path="res://entity/player/player.gd" id="1_4flbx"]
+[ext_resource type="PackedScene" uid="uid://10np7jhfu3ao" path="res://components/Interaction Array/interact_ray.tscn" id="2_onrkg"]
+[ext_resource type="Script" uid="uid://3em6wetdguq8" path="res://ui_script.gd" id="3_hqtel"]
+[ext_resource type="PackedScene" uid="uid://bilhtfahidddi" path="res://components/HealthComponent/health_component.tscn" id="3_i3pqv"]
+[ext_resource type="Script" uid="uid://cstt3mgwuuain" path="res://components/CombatComponents/combat_component.gd" id="5_combat"]
+[ext_resource type="Script" uid="uid://cgj3byjljqdxk" path="res://components/CombatComponents/melee_weapon_component.gd" id="6_weapon"]
+[ext_resource type="Script" uid="uid://bj7v6hjyshcoe" path="res://components/CombatComponents/hitbox_component.gd" id="7_hitbox"]
+[ext_resource type="Script" uid="uid://dypwmlmtrk5o2" path="res://components/CombatComponents/hurtbox_component.gd" id="8_hurtbox"]
+[ext_resource type="Script" uid="uid://bigojiqyyv32n" path="res://components/AbilitySystem/ability_component.gd" id="9_ability_component"]
+[ext_resource type="Script" uid="uid://b37c865k33vto" path="res://components/AbilitySystem/Abilities/dash_ability.gd" id="10_dash"]
+[ext_resource type="Script" uid="uid://u7rd37ohfey4" path="res://components/AbilitySystem/Abilities/fireball_ability.gd" id="11_fireball"]
+[ext_resource type="Script" uid="uid://b7wju1to5e3f3" path="res://components/TeamComponent/team_component.gd" id="12_wltfy"]
+[ext_resource type="Script" uid="uid://5clrykxsmf1v" path="res://components/InventorySystem/Inventory_Component.gd" id="13_ivlxb"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_i3pqv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hitbox"]
+size = Vector3(1, 1, 1.5)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_onrkg"]
+
+[sub_resource type="Animation" id="Animation_sweqy"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("OverlayWirhEffects:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_hqtel"]
+resource_name = "blood"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("OverlayWirhEffects:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2hs0m"]
+_data = {
+&"RESET": SubResource("Animation_sweqy"),
+&"blood": SubResource("Animation_hqtel")
+}
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hurtbox"]
+
+[node name="Player" type="CharacterBody3D" groups=["Player"]]
+script = ExtResource("1_4flbx")
+speed = null
+jump_velocity = null
+mouse_sensitivity = null
+max_pitch_deg = null
+tilt_amount = null
+tilt_speed = null
+max_health = null
+team = null
+enable_combo = null
+max_combo_count = null
+combo_window = null
+allow_air_attack = null
+stop_movement_on_attack = null
+light_damage = null
+light_knockback = null
+light_attack_duration = null
+light_active_start = null
+light_active_end = null
+light_cooldown = null
+heavy_damage = null
+heavy_knockback = null
+heavy_attack_duration = null
+heavy_active_start = null
+heavy_active_end = null
+heavy_cooldown = null
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_onrkg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_i3pqv")
+skeleton = NodePath("../CollisionShape3D")
+
+[node name="Pivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7126968, -0.2907617)
+
+[node name="Camera3D" type="Camera3D" parent="Pivot"]
+
+[node name="MeleeWeaponComponent" type="Node3D" parent="Pivot/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.3, -1)
+script = ExtResource("6_weapon")
+
+[node name="HitboxComponent" type="Area3D" parent="Pivot/Camera3D/MeleeWeaponComponent"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("7_hitbox")
+damage = 15.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pivot/Camera3D/MeleeWeaponComponent/HitboxComponent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.75)
+shape = SubResource("BoxShape3D_hitbox")
+
+[node name="InteractRay" parent="Pivot" instance=ExtResource("2_onrkg")]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_hqtel")
+
+[node name="Cross" type="TextureRect" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = -13.841001
+anchor_top = -7.5000005
+anchor_right = -13.841001
+anchor_bottom = -7.5000005
+offset_left = 553.64
+offset_top = 300.00003
+offset_right = 573.64
+offset_bottom = 316.00003
+texture = SubResource("PlaceholderTexture2D_onrkg")
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 1
+offset_left = -548.0
+offset_top = -305.0
+offset_right = -493.0
+offset_bottom = -282.0
+text = "dasdas"
+
+[node name="OverlayWirhEffects" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = -629.0
+offset_top = -315.0
+offset_right = 527.0
+offset_bottom = 330.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Control"]
+libraries = {
+&"": SubResource("AnimationLibrary_2hs0m")
+}
+
+[node name="HealthBarContainer" type="VBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -552.0
+offset_top = -323.0
+offset_right = -252.0
+offset_bottom = -263.0
+grow_vertical = 0
+
+[node name="HealthLabel" type="Label" parent="Control/HealthBarContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 18
+text = "Health: 100 / 100"
+
+[node name="ProgressBar" type="ProgressBar" parent="Control/HealthBarContainer"]
+custom_minimum_size = Vector2(300, 30)
+layout_mode = 2
+value = 100.0
+show_percentage = false
+
+[node name="health_component" parent="." instance=ExtResource("3_i3pqv")]
+
+[node name="CombatComponent" type="Node" parent="."]
+script = ExtResource("5_combat")
+
+[node name="HurtboxComponent" type="Area3D" parent="."]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("8_hurtbox")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HurtboxComponent"]
+shape = SubResource("CapsuleShape3D_hurtbox")
+
+[node name="AbilityComponent" type="Node" parent="."]
+script = ExtResource("9_ability_component")
+ability_1 = NodePath("DashAbility")
+ability_2 = NodePath("FireballAbility")
+
+[node name="DashAbility" type="Node" parent="AbilityComponent"]
+script = ExtResource("10_dash")
+dash_speed = 50.0
+dash_duration = 0.4
+cooldown = 0.0
+
+[node name="FireballAbility" type="Node" parent="AbilityComponent"]
+script = ExtResource("11_fireball")
+
+[node name="TeamComponent" type="Node" parent="."]
+script = ExtResource("12_wltfy")
+team = 3
+metadata/_custom_type_script = "uid://b7wju1to5e3f3"
+
+[node name="MeleeWeaponComponent" type="Node3D" parent="."]
+script = ExtResource("6_weapon")
+metadata/_custom_type_script = "uid://cgj3byjljqdxk"
+
+[node name="Inventory_Component" type="Node" parent="."]
+script = ExtResource("13_ivlxb")
+metadata/_custom_type_script = "uid://5clrykxsmf1v"
+
+[connection signal="health_changed" from="health_component" to="Control" method="_on_health_component_health_changed"]
+
+[editable path="health_component"]
